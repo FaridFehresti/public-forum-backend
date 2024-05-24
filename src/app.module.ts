@@ -4,9 +4,12 @@ import config from './config/config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaService } from './prisma/prisma.service';
+import { RouterModule } from '@nestjs/core';
+import { routes } from './app.routes';
 
 @Module({
   imports: [
+    RouterModule.register(routes),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
