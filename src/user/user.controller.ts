@@ -1,6 +1,7 @@
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { UserService } from './user.service';
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { IUserData } from './user-data.interfaces';
 
 @Controller('')
 export class UserController {
@@ -13,7 +14,9 @@ export class UserController {
         return this.userService.getUsers();
     }
     @Post()
-    async createUser(@Body() body:{email:string; password:string}){
-        return this.userService.createUser(body.email, body.password);
+    @UsePipes(new ValidationPipe({ transform: true }))
+    async createUser(@Body()createUserDto: IUserData){
+
+        return this.userService.createUser(createUserDto);
     }
 }

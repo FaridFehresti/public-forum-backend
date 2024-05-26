@@ -1,29 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { IUserData } from './user-data.interfaces';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class UserService {
-    constructor(private prisma: PrismaService){
+  constructor(private prisma: PrismaService) {}
 
-    }
-    async findUserByEmail(email: string): Promise<{email:string , password:string, id:number} | null> {
-        return this.prisma.user.findUnique({
-          where: { email },
-        });
-      }
-    async createUser(email:string , password:string){
-        const hashedPassword = await bcrypt.hash(password, 10)
+  async findUserByEmail(email: string): Promise<{ email: string; password: string; id: number } | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
 
-        return this.prisma.user.create({
-            data:{
-                email,
-                password:hashedPassword
-            }
-        })
+  async createUser(createUserDto: IUserData) {
+    // Validate the input data
+    const validationErrors = await validate(createUserDto);
+    if (validationErrors.length > 0) {
+      throw new BadRequestException(validationErrors);
     }
-    async getUsers(): Promise<{email:string , password:string, id:number}[]> {
-        return this.prisma.user.findMany();
-      }
-    
+
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+    return this.prisma.user.create({
+      data: {
+        email: createUserDto.email,
+        password: hashedPassword,
+        birthdate: new Date(createUserDto.birthdate),  // Convert string to Date object
+        first_name: createUserDto.first_name,
+        last_name: createUserDto.last_name,
+        gender: createUserDto.gender,
+        user_name: createUserDto.user_name,
+      },
+    });
+  }
+
+  async getUsers(): Promise<{ email: string; password: string; id: number }[]> {
+    return this.prisma.user.findMany();
+  }
 }
