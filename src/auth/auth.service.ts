@@ -23,4 +23,7 @@ export class AuthService {
             acces_token:this.jwtService.sign(payload)
         }
     }
+    async validateUserByJwt(payload: { sub: number }): Promise<any> {
+        return this.userService.findUserById(payload.sub);
+    }
 }

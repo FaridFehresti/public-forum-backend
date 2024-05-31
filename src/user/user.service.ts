@@ -7,7 +7,12 @@ import { validate } from 'class-validator';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-
+  async findUserById(id: number): Promise<{ email: string; id: number; first_name: string; last_name: string } | null> {
+    return this.prisma.user.findUnique({
+        where: { id },
+        select: { id: true, email: true, first_name: true, last_name: true }, // select only necessary fields
+    });
+}
   async findUserByEmail(email: string): Promise<{ email: string; password: string; id: number } | null> {
     return this.prisma.user.findUnique({
       where: { email },

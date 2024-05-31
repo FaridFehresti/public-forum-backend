@@ -1,6 +1,6 @@
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { UserService } from './user.service';
-import { Body, Controller, Get, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Request,Controller, Get, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { IUserData } from './user-data.interfaces';
 
 @Controller('')
@@ -10,8 +10,8 @@ export class UserController {
     }
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getUser(){
-        return this.userService.getUsers();
+    async getUser(@Request() req) {
+        return req.user; 
     }
     @Post()
     @UsePipes(new ValidationPipe({ transform: true }))
