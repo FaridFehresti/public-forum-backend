@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaService } from './prisma/prisma.service';
 import { RouterModule } from '@nestjs/core';
 import { routes } from './app.routes';
+import { TaksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { routes } from './app.routes';
     }),
     UserModule,
     AuthModule,
+    TaksModule,
   ],
   providers: [PrismaService],
 })
